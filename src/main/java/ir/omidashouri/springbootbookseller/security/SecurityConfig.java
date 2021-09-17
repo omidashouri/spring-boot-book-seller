@@ -1,14 +1,12 @@
 package ir.omidashouri.springbootbookseller.security;
 
-import ir.omidashouri.springbootbookseller.configuration.ProjectConfiguration;
+import ir.omidashouri.springbootbookseller.security.jwt.JwtAuthorizationFilter;
+import ir.omidashouri.springbootbookseller.security.jwt.JwtProviderInterface;
 import lombok.AllArgsConstructor;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.BeanIds;
-import org.springframework.security.config.annotation.SecurityBuilder;
-import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -16,6 +14,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -25,6 +24,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final CustomUserDetailsService customUserDetailsService;
+    private final JwtProviderInterface jwtProviderInterface;
 
 
     @Override
@@ -48,6 +48,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 .antMatchers("/api/authentication/**").permitAll()
                 .anyRequest().authenticated();
+
+//        JWT filter
+        http.addFilterBefore(jwtAuthenticationFilter(jwtProviderInterface), UsernamePasswordAuthenticationFilter.class);
+    }
+
+    //Here we have difference -> no JwtProviderInterface as input constructor
+    @Bean
+    public JwtAuthorizationFilter jwtAuthenticationFilter(JwtProviderInterface jwtProviderInterface){
+        return new JwtAuthorizationFilter(jwtProviderInterface);
     }
 
     @Bean
