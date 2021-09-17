@@ -8,6 +8,8 @@ class SpringBootBookSellerApplicationTests {
 
 	@Test
 	void contextLoads() {
+		
+
 	}
 
 }
