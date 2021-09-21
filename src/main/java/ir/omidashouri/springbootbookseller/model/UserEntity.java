@@ -34,5 +34,8 @@ public class UserEntity implements Serializable {
     @Enumerated(EnumType.STRING)
     @Column(name = "ROLE")
     private Role role;
+
+    @Transient
+    private String token;
 }
 
