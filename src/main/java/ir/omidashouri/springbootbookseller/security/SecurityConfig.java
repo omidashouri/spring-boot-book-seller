@@ -12,7 +12,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -25,12 +24,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final CustomUserDetailsService customUserDetailsService;
     private final JwtProviderInterface jwtProviderInterface;
+    private final PasswordEncoder myPasswordEncoder;
 
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(customUserDetailsService)
-                .passwordEncoder(myPasswordEncoder());
+                .passwordEncoder(myPasswordEncoder);
     }
 
     @Override
@@ -57,11 +57,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public JwtAuthorizationFilter jwtAuthenticationFilter(JwtProviderInterface jwtProviderInterface){
         return new JwtAuthorizationFilter(jwtProviderInterface);
-    }
-
-    @Bean
-    public PasswordEncoder myPasswordEncoder() {
-        return new BCryptPasswordEncoder();
     }
 
 
